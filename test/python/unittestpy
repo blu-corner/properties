@@ -1,0 +1,162 @@
+#!/usr/bin/env python
+import unittest
+import properties
+import os
+
+props = """
+property1=val1
+ns.property2=val2
+ns.clas.property3=val3
+ns.clas.instance.property4=val4
+
+ns.clas.instance.property5=wrong
+property5=val5
+"""
+
+namespace_properties = """
+ns.clas.instance.property1=val1
+ns.clas.instance.property2=val2
+
+property3=wrong
+ns.property3=wrong
+ns.clas.property3=wrong
+ns.clas.instance.property3=val3
+
+ns.clas.instance.property4=true
+ns.clas.instance.property5=false
+
+property6=wrong
+ns.property6=wrong
+ns.clas.property6=val6
+
+property7=wrong
+ns.property7=val7
+
+property8=val8
+
+ns.clas.instance.bool_true1=true
+ns.clas.instance.bool_true2=TRUE
+ns.clas.instance.bool_true3=y
+
+ns.clas.instance.bool_false1=false
+ns.clas.instance.bool_false2=False
+ns.clas.instance.bool_false3=n
+
+ns.clas.instance.integer1=100
+ns.clas.instance.integer2=a
+
+ns.clas.instance.double1=10.19
+ns.clas.instance.double2=a
+
+newns.newclas.newinstance.property1=value1
+"""
+
+
+class TestProperties(unittest.TestCase):
+    def setUp(self):
+        with open('test_data.properties', 'w') as fd:
+            fd.write(props)
+
+        self.props = properties.Properties()
+        self.props.loadFromFile('test_data.properties')
+
+    def tearDown(self):
+        if os.path.exists('test_data.properties'):
+            os.remove('test_data.properties')
+
+    def test_getitem(self):
+        self.assertTrue(self.props["property1"] == "val1")
+        self.assertTrue(self.props["ns.property2"] == "val2")
+        self.assertTrue(self.props["ns.clas.property3"] == "val3")
+        self.assertTrue(self.props["ns.clas.instance.property4"] == "val4")
+
+    def test_hierarchy(self):
+        self.assertTrue(self.props["property5"] == "val5")
+
+
+class TestPropertiesNamespace(unittest.TestCase):
+    def setUp(self):
+        with open('test_data.properties', 'w') as fd:
+            fd.write(namespace_properties)
+
+        self.props = properties.Properties("ns", "clas", "instance")
+        self.props.loadFromFile('test_data.properties')
+
+    def tearDown(self):
+        if os.path.exists('test_data.properties'):
+            os.remove('test_data.properties')
+
+    def test_loadFromFile_fail(self):
+        p = properties.Properties()
+        with self.assertRaises(RuntimeError):
+            p.loadFromFile('made_up_file')
+
+    def test_get_fail(self):
+        with self.assertRaises(RuntimeError):
+            self.props['doesnt exist']
+
+    def test_bool_fail(self):
+        with self.assertRaises(RuntimeError):
+            self.props['doesnt exist']
+
+        with self.assertRaises(RuntimeError):
+            # value not a bool
+            self.props.getBool('property1')
+
+    def test_getitem(self):
+        self.assertTrue(self.props["property1"] == "val1")
+        self.assertTrue(self.props["property2"] == "val2")
+
+    def test_get(self):
+        self.assertTrue(self.props.get("property1") == "val1")
+        self.assertTrue(self.props.get("property2") == "val2")
+
+    def test_get_hierarchy(self):
+        self.assertTrue(self.props["property3"] == "val3")
+        self.assertTrue(self.props["property6"] == "val6")
+        self.assertTrue(self.props["property7"] == "val7")
+        self.assertTrue(self.props["property8"] == "val8")
+
+    def test_get_default(self):
+        self.assertTrue(self.props.get("yyy", "100") == "100")
+
+    def test_set_property(self):
+        self.props.setProperty("new", "100")
+        self.assertTrue(self.props["new"] == "100")
+
+    def test_bool(self):
+        self.assertTrue(self.props.getBool('bool_true1'))
+        self.assertTrue(self.props.getBool('bool_true2'))
+        self.assertTrue(self.props.getBool('bool_true3'))
+
+        self.assertFalse(self.props.getBool('bool_false1'))
+        self.assertFalse(self.props.getBool('bool_false2'))
+        self.assertFalse(self.props.getBool('bool_false3'))
+
+    def test_get_integer(self):
+        self.assertTrue(self.props.getInteger('integer1') == 100)
+
+    def test_get_integer_fail(self):
+        with self.assertRaises(RuntimeError):
+            self.props.getInteger('integer2')
+
+        with self.assertRaises(RuntimeError):
+            self.props.getInteger('doesnt exist')
+
+    def test_get_double(self):
+        self.assertTrue(self.props.getDouble('double1') == 10.19)
+
+    def test_get_double_fail(self):
+        with self.assertRaises(RuntimeError):
+            self.props.getDouble('double2')
+
+        with self.assertRaises(RuntimeError):
+            self.props.getDouble('doesnt exist')
+
+    def test_set_namespace(self):
+        p = properties.Properties(self.props, "newns", "newclas", "newinstance")
+        self.assertTrue(p['property1'] == 'value1')
+
+
+if __name__ == '__main__':
+    unittest.main()

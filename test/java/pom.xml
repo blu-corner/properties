@@ -1,0 +1,121 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+ 
+  <groupId>com.neueda.properties</groupId>
+  <artifactId>unittestj</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+ 
+  <name>Neueda Cap Open properties Unit Tests</name>
+  <url>https://www.neueda.com/</url>
+
+  <properties> 
+	<maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <junit.version>4.12</junit.version>
+	<build.dir>${basedir}/../../build/</build.dir>
+  </properties>
+ 
+  <dependencies>
+    <dependency>
+      <groupId>com.neueda.properties</groupId>
+      <artifactId>properties-jni</artifactId>
+      <version>1.0.0</version>
+      <scope>system</scope>
+      <systemPath>${build.dir}/src/bindings/java/PropertiesJNI.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+    </dependency>
+    <dependency>
+		<groupId>org.hamcrest</groupId>
+    	<artifactId>hamcrest-all</artifactId>
+   	 	<version>1.3</version>
+	</dependency>       
+  </dependencies>
+
+	<build>
+		<directory>../../build/test/java/target</directory>		
+		<plugins>
+      
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.2</version>
+				<configuration>
+					<generatePom>true</generatePom>
+                	<groupId>com.neueda.properties</groupId>
+                	<artifactId>properties-jni</artifactId>
+                	<version>1.0.0</version>
+                	<packaging>jar</packaging>
+                    <file>${build.dir}/src/bindings/java/PropertiesJNI.jar</file>
+            	</configuration>
+				<executions>
+					<execution>					
+					    <id>install-jar</id>
+                  		<phase>validate</phase>
+						<goals>
+                			<goal>install-file</goal>
+            			</goals>
+        			</execution>
+    			</executions>
+			</plugin>
+      
+        	<plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
+            	<artifactId>maven-dependency-plugin</artifactId>
+            	<executions>
+                	<execution>
+                    	<id>copy-dependencies</id>
+                    	<phase>prepare-package</phase>
+                    	<goals>
+                        	<goal>copy-dependencies</goal>
+                    	</goals>
+                    	<configuration>
+                        	<outputDirectory>${project.build.directory}/libs</outputDirectory>
+                    	</configuration>
+                	</execution>
+            	</executions>
+        	</plugin>
+        
+        	<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+    				<archive>
+      					<manifest>
+        					<mainClass>com.neueda.properties.test.Main</mainClass>
+      					</manifest>
+    				</archive>
+    				<descriptorRefs>
+      					<descriptorRef>jar-with-dependencies</descriptorRef>
+    				</descriptorRefs>
+ 				</configuration>
+  				<executions>
+    				<execution>
+      					<id>make-assembly</id>
+      					<phase>package</phase>
+     					<goals>
+        					<goal>single</goal>
+      					</goals>
+    				</execution>
+  				</executions>
+			</plugin>
+			<plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
+            	<artifactId>maven-surefire-plugin</artifactId>
+           	 	<version>2.12.2</version>
+            	<configuration>
+               		<testSourceDirectory>${basedir}/src/main/java/</testSourceDirectory>
+                    <testClassesDirectory>${project.build.directory}/classes/</testClassesDirectory>
+            		<testFailureIgnore>true</testFailureIgnore>
+                	<includes>
+                    	<include>**/Test*.java</include>
+               		</includes>
+            	</configuration>       	
+        	</plugin>
+      </plugins>     
+  </build>
+</project>

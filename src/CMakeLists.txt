@@ -24,6 +24,7 @@ add_library(properties SHARED
   )
 
 target_link_libraries(properties utils)
+add_dependencies(properties UTILS_PROJECT)
 
 install(TARGETS properties
   EXPORT ${PROJECT_NAME}

@@ -59,7 +59,7 @@ install(FILES ${JAVA_INSTALL_FILES}
   DESTINATION lib/java)
 
 if(TARGET _Properties)
-  install(TARGETS _properties
+  install(TARGETS _Properties
     DESTINATION lib/java)
 else()
   install(TARGETS Properties

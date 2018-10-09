@@ -1,9 +1,9 @@
-INSTALL_PREFIX=../../
+INSTALL_PREFIX=../../../
 CXX=g++
 
 CFLAGS=-I$(INSTALL_PREFIX)/include/properties/ -I${INSTALL_PREFIX}/include/utils -I${INSTALL_PREFIX}/include/sbf
 LDFLAGS=-L$(INSTALL_PREFIX)/lib 
-LIBS=-lproperties
+LIBS=-lproperties -lutils -lsbfcommon -lsbfcore
 
 all: example
 

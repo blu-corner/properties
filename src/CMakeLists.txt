@@ -28,6 +28,9 @@ add_dependencies(properties UTILS_PROJECT)
 
 install(TARGETS properties
   EXPORT ${PROJECT_NAME}
+  COMPONENT library
+  RUNTIME DESTINATION lib
+  ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   )
 

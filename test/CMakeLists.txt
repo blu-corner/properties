@@ -1,6 +1,18 @@
 #
 # Copyright 2014-2018 Neueda Ltd.
 #
+
+set(TEST_LIBRARIES
+  properties
+  gtest
+  gmock
+)
+
+if(NOT WIN32)
+	set(TEST_LIBRARIES ${TEST_LIBRARIES}
+					   pthread)
+endif()
+
 include_directories(
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_SOURCE_DIR}/test
@@ -19,12 +31,7 @@ add_executable(unittest
   TestProperties.cc
   )
 
-target_link_libraries(unittest
-  properties
-  gtest
-  gmock
-  pthread
-  )
+target_link_libraries(unittest ${TEST_LIBRARIES})
 
 add_test(NAME unittest
   COMMAND unittest --gtest_output=xml:../test.xml

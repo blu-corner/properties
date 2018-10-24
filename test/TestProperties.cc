@@ -33,7 +33,7 @@ protected:
         std::string errorMessage;
         mProps = new properties("namespace", "class", "name");
         bool ok = mProps->loadFromFile (TEST_FILE_NAME, errorMessage);
-        if (not ok)
+        if (!ok)
         {
             std::cerr << "failed to load file: "
                       << errorMessage

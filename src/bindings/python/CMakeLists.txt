@@ -27,6 +27,6 @@ install(FILES ${PYTHON_INSTALL_FILES}
 
 set(SWIG_PY_RUNTIME_TEMP ${CMAKE_BINARY_DIR}/swigPyRuntime.h)
 if(NOT EXISTS ${SWIG_PY_RUNTIME})
-    install(CODE "execute_process(COMMAND swig -c++ -python -external-runtime ${SWIG_PY_RUNTIME_TEMP})")
+    install(CODE "execute_process(COMMAND ${SWIG_EXECUTABLE} -c++ -python -external-runtime ${SWIG_PY_RUNTIME_TEMP})")
     install(FILES ${SWIG_PY_RUNTIME_TEMP} DESTINATION include)
 endif(NOT EXISTS ${SWIG_PY_RUNTIME})

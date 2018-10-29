@@ -35,7 +35,7 @@
     {
         std::string value;
         bool ok = self->get (key, value);
-        if (not ok)
+        if (!ok)
         {
             std::ostringstream oss;
             oss << "failed to find key: "
@@ -58,7 +58,7 @@
         std::string errorMessage;
         bool ok = self->loadFromFile (filePath, errorMessage);
         
-        if (not ok)
+        if (!ok)
         {
             std::ostringstream oss;
             oss << "failed to load properties file: "

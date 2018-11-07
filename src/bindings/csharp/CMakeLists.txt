@@ -1,14 +1,23 @@
 #
 # Copyright 2014-2018 Neueda Ltd.
 #
-find_program(MCS mcs)
-if(NOT MCS)
-  message(FATAL_ERROR "Failed to find mono compiler")
+
+if(NOT CSHARP_COMPILER)
+  if(NOT WIN32)
+    find_program(CSHARP_COMPILER mcs)
+  else()
+    find_program(CSHARP_COMPILER csc)
+  endif()
+
+  if(NOT CSHARP_COMPILER)
+    message(FATAL_ERROR "Failed to find csharp compiler")
+  endif()
 endif()
-message(STATUS "Found mono compiler: ${MCS}")
+message(STATUS "Found csharp compiler: ${CSHARP_COMPILER}")
+set(CSHARP_OUTPUT_NAME "PropertiesBindings.dll")
 
 # set the flags for swig
-set(CMAKE_SWIG_FLAGS -namespace Neueda.Config -dllimport PropertiesCsharp)
+set(CMAKE_SWIG_FLAGS -namespace Neueda.Properties -dllimport PropertiesCsharp -outfile Properties.cs)
 set_source_files_properties(../properties.csharp.i PROPERTIES CPLUSPLUS ON)
 
 # Add swig module
@@ -17,49 +26,39 @@ swig_add_module(PropertiesCsharp csharp ../properties.csharp.i)
 swig_link_libraries(PropertiesCsharp properties)
 
 # Files to install with csharp
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/Properties.dll
-  COMMAND ${MCS} -target:library -out:${CMAKE_CURRENT_BINARY_DIR}/Properties.dll ${CMAKE_CURRENT_BINARY_DIR}/*.cs
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${CSHARP_OUTPUT_NAME}
+  COMMAND ${CSHARP_COMPILER} -target:library -out:${CMAKE_CURRENT_BINARY_DIR}/${CSHARP_OUTPUT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/*.cs
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS ${CSHARP_SRC_FILES}
   COMMENT "Generating Csharp DLL"
   VERBATIM
   )
-add_custom_target(CsharpDLL ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Properties.dll)
-
-if (TARGET _PropertiesCsharp)
-  add_dependencies(CsharpDLL _PropertiesCsharp)
-else()
-  add_dependencies(CsharpDLL PropertiesCsharp)
-endif()
+add_custom_target(CsharpDLL ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${CSHARP_OUTPUT_NAME})
+add_dependencies(CsharpDLL ${SWIG_MODULE_PropertiesCsharp_REAL_NAME})
 
 if(APPLE)
   set(CSHARP_DYLIB_PREFIX "")
   set(CSHARP_DYLIB_SUFFIX ".so")
+elseif(WIN32)
+  set(CSHARP_DYLIB_PREFIX "")
+  set(CSHARP_DYLIB_SUFFIX ".dll")
 else()
   set(CSHARP_DYLIB_PREFIX "lib")
   set(CSHARP_DYLIB_SUFFIX ".so")
 endif()
 
-# cmake 2.8 swig has issues on figuring out naming libs
-if(TARGET _PropertiesCsharp)
-  set_target_properties(_PropertiesCsharp PROPERTIES OUTPUT_NAME "PropertiesCsharp")
-  set_target_properties(_PropertiesCsharp PROPERTIES SUFFIX ${CSHARP_DYLIB_SUFFIX})
+set_target_properties(${SWIG_MODULE_PropertiesCsharp_REAL_NAME} PROPERTIES OUTPUT_NAME "PropertiesCsharp")
+if(${CSHARP_DYLIB_SUFFIX})
+  set_target_properties(${SWIG_MODULE_PropertiesCsharp_REAL_NAME} PROPERTIES PREFIX ${CSHARP_DYLIB_PREFIX})
 endif()
+set_target_properties(${SWIG_MODULE_PropertiesCsharp_REAL_NAME} PROPERTIES SUFFIX ${CSHARP_DYLIB_SUFFIX})
 
 set(CSHARP_INSTALL_FILES
-  # ${CMAKE_CURRENT_SOURCE_DIR}/run.sh
-  # ${CMAKE_CURRENT_SOURCE_DIR}/build.sh
-  # ${CMAKE_CURRENT_SOURCE_DIR}/example.cs
-  ${CMAKE_CURRENT_BINARY_DIR}/Properties.dll)
+  ${CMAKE_CURRENT_BINARY_DIR}/${CSHARP_OUTPUT_NAME})
 
 # Declare install target for csharp
 install(FILES ${CSHARP_INSTALL_FILES}
-  DESTINATION lib/csharp)
+        DESTINATION lib/csharp)
 
-if(TARGET _PropertiesCsharp)
-  install(TARGETS _PropertiesCsharp
-    DESTINATION lib/csharp)
-else()
-  install(TARGETS PropertiesCsharp
-    DESTINATION lib/csharp)
-endif()
+install(TARGETS ${SWIG_MODULE_PropertiesCsharp_REAL_NAME}
+        DESTINATION lib/csharp)

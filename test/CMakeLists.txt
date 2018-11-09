@@ -32,6 +32,7 @@ add_executable(unittest
   )
 
 target_link_libraries(unittest ${TEST_LIBRARIES})
+add_dependencies(unittest googletest)
 
 add_test(NAME unittest
   COMMAND unittest --gtest_output=xml:../test.xml

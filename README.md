@@ -34,7 +34,7 @@ $ cmake -DTESTS=ON ../
 $ make install
 ```
 
-Language bindings can be enabled by passing -DJAVA=on, -DPYTHON=on
+Language bindings can be enabled by passing -DJAVA=on, -DCSHARP=on, -DPYTHON=on
 to CMake. It is possible to build all bindings in the same build.
 
 ### Dependencies

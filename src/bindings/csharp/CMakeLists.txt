@@ -48,8 +48,8 @@ else()
 endif()
 
 set_target_properties(${SWIG_MODULE_PropertiesCsharp_REAL_NAME} PROPERTIES OUTPUT_NAME "PropertiesCsharp")
-if(${CSHARP_DYLIB_SUFFIX})
-  set_target_properties(${SWIG_MODULE_PropertiesCsharp_REAL_NAME} PROPERTIES PREFIX ${CSHARP_DYLIB_PREFIX})
+if(NOT CSHARP_DYLIB_PREFIX STREQUAL "")
+  set_target_properties(${SWIG_MODULE_PropertiesCsharp_REAL_NAME} PROPERTIES PREFIX "${CSHARP_DYLIB_PREFIX}")
 endif()
 set_target_properties(${SWIG_MODULE_PropertiesCsharp_REAL_NAME} PROPERTIES SUFFIX ${CSHARP_DYLIB_SUFFIX})
 

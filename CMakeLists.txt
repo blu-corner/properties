@@ -4,12 +4,6 @@
 cmake_minimum_required(VERSION 2.8.0)
 project(properties CXX)
 
-if(PYTHON_LIBRARY AND PYTHON_INCLUDE_DIR AND PYTHON_EXECUTABLE)
-    set(SUBMODULE_FLAGS ${SUBMODULE_FLAGS} -DPYTHON_LIBRARY=${PYTHON_LIBRARY})
-    set(SUBMODULE_FLAGS ${SUBMODULE_FLAGS} -DPYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR})
-    set(SUBMODULE_FLAGS ${SUBMODULE_FLAGS} -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE})
-endif()
-
 # declare submodule global
 set(SUBMODULE_FLAGS)
 
@@ -38,6 +32,7 @@ option(PYTHON "Enable Python bindings" OFF)
 option(CSHARP "Enable C# bindings" OFF)
 option(COVERAGE "Enable gcov coverage" OFF)
 option(EXAMPLES "Enable examples" ON)
+set(PYTHON_CONFIG "python3-config" CACHE STRING "python-config for build env config")
 
 # set version info
 set(CONFIG_MAJOR_VERSION 0)

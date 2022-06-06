@@ -1,3 +1,5 @@
+# PROJECT MOVED TO [Version1 Org/properties](https://github.com/Version1/properties). THIS REPOSITORY WILL NO LONGER BE MAINTAINED.
+
 # properties [![Build Status](https://travis-ci.com/blu-corner/properties.svg?branch=master)](https://travis-ci.com/blu-corner/properties) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=blu-corner_properties&metric=alert_status)](https://sonarcloud.io/dashboard?id=blu-corner_properties)
 
 A C++ properties file parser. There are SWIG bindings allowing this module to be
